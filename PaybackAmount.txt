@@ -1,0 +1,68 @@
+const roiInvestmodel = require('../models/roiInvest.model'); 
+
+QUESTION 1: How would you calculate the total payback amount for a specific user based on their investment history (i.e., paybackhistory)?
+
+Answer =>
+
+const calculateTotalPaybackAmount = async (req, res) => {
+    try {
+        const { userId } = req.params; 
+
+        const userInvestments = await roiInvestmodel.find({ userId: userId });
+
+        let totalPaybackAmount = 0;
+
+        userInvestments.forEach(investment => {
+            investment.paybackhistory.forEach(history => {
+                totalPaybackAmount += history.amount;
+            });
+        });
+
+        res.status(200).json({ totalPaybackAmount });
+    } catch (err) {
+        res.status(500).json({ message: `Error calculating total payback amount: ${err.message}` });
+    }
+};
+
+module.exports = { calculateTotalPaybackAmount };
+
+
+
+
+
+
+
+
+QUESTION 2: How would you retrieve the latest payback entry for a specific investment, along with the total payback amount so far?
+
+Answer => 
+
+const roiInvestmodel = require('../models/roiInvest.model');
+
+const getLatestPaybackEntry = async (req, res) => {
+    try {
+        const { investmentId } = req.params
+
+        const investment = await roiInvestmodel.findById(investmentId);
+
+        if (!investment) {
+            return res.status(404).json({ message: "Investment not found." })
+        }
+
+        const paybackHistory = investment.paybackhistory;
+
+        const latestPayback = paybackHistory[0];
+
+        let totalPaybackAmount = 0;
+        paybackHistory.forEach(history => {
+            totalPaybackAmount += history.amount;
+        })
+
+        res.status(200).json({ latestPayback, totalPaybackAmount });
+
+    } catch (err) {
+        res.status(500).json({ message: `Error fetching latest payback entry: ${err.message}` });
+    }
+};
+
+module.exports = { getLatestPaybackEntry };
