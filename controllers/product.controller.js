@@ -3,6 +3,15 @@ const categoryCollection = require("../models/category.model");
 const mongoose = require("mongoose")
 
 
+// 5 stages of mongodb aggregation
+// 1. $match
+// 2. $group
+// 3. $lookup
+// 4. $sort
+// 5. $project
+
+
+
 // Creating a new product
 const addProduct = async (req, res) => {
     try {
